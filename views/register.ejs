@@ -1,0 +1,38 @@
+<% layout('layouts/boilerplate2') %>
+
+
+<div class="middle">
+    <div class="row">
+        <h2 class="text-center text-danger my-1">REGISTER YOUR ACCOUNT</h2>
+        <div class="col-6 offset-3">
+            <form action="/register" method="post" class="validatedform" novalidate>
+                <div class="mb-2">
+                    <label class="form-label" for="email">EMAIL:</label>
+                    <input class="form-control" type="email" name="email" id="email" placeholder="ABC@YOPMAIL.COM"
+                        required>
+                    <div class="valid-feedback">
+                        LOOKS GOOD
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" for="username">USERNAME:</label>
+                    <input class="form-control" type="text" name="username" id="username" placeholder="USERNAME"
+                        required>
+                    <div class="valid-feedback">
+                        LOOKS GOOD
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" for="password">PASSWORD:</label>
+                    <input class="form-control" type="password" name="password" id="password" placeholder="PASSWORD"
+                        required>
+                    <div class="valid-feedback">
+                        LOOKS GOOD
+                    </div>
+                </div>
+                <button class="btn btn-success">REGISTER</button>
+            </form>
+
+        </div>
+    </div>
+</div>

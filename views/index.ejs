@@ -1,0 +1,114 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="mb-3" id="map" style="width: 100%; height: 350px"></div>
+<div class="container" id="campgrounds-container">
+    <h1>POPULAR CAMPGROUNDS</h1>
+    <div class="mb-3">
+        <a class="btn btn-warning" href="/campgrounds/new">Add Campground</a>
+    </div>
+    <div id="infinite-scroll-content">
+        <% for (let c of campground) { %>
+        <div class="card mb-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <% if (c.images.length) { %>
+                    <img class="img-fluid" alt="" src="<%= c.images[0].url %>">
+                    <% } else { %>
+                    <img class="img-fluid" alt=""
+                        src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw0NDQ0NDQ0...">
+                    <!-- Placeholder image -->
+                    <% } %>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= c.title %></h5>
+                        <p class="card-text"><%= c.description %></p>
+                        <p class="card-text">
+                            <small class="text-muted"><%= c.location %></small>
+                        </p>
+                        <a class="btn btn-primary" href="/campgrounds/<%= c._id %>">VIEW <%= c.title %></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    let page = 1; // Initial page number
+    let loading = false; // Flag to prevent multiple simultaneous requests
+
+    // Function to fetch more campgrounds
+    function fetchMoreCampgrounds() {
+        if (!loading) {
+            loading = true;
+            const url = `/campgrounds?page=${page + 1}`; // API endpoint to fetch next page
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newCampgrounds = doc.getElementById('infinite-scroll-content').innerHTML;
+
+                    // Append the fetched content directly to the container
+                    document.getElementById('infinite-scroll-content').insertAdjacentHTML('beforeend', newCampgrounds);
+
+                    // Add 'fade-in' class to new campground cards for transition effect
+                    document.querySelectorAll('.card').forEach(card => {
+                        card.classList.add('fade-in');
+                    });
+
+                    // Trigger reflow to apply transition
+                    void document.body.offsetHeight;
+
+                    // Add 'show' class to new campground cards for opacity change
+                    document.querySelectorAll('.card').forEach(card => {
+                        card.classList.add('show');
+                    });
+
+                    page++;
+                    loading = false;
+                })
+                .catch(error => {
+                    console.error('Error fetching more campgrounds:', error);
+                    loading = false;
+                });
+        }
+    }
+
+
+
+
+    // Function to fetch more campgrounds
+    // function fetchMoreCampgrounds() {
+    //     if (!loading) {
+    //         loading = true;
+    //         const url = `/campgrounds?page=${page + 1}`; // API endpoint to fetch next page
+    //         fetch(url)
+    //             .then(response => response.text())
+    //             .then(html => {
+    //                 const parser = new DOMParser();
+    //                 const doc = parser.parseFromString(html, 'text/html');
+    //                 const newCampgrounds = doc.getElementById('infinite-scroll-content').innerHTML;
+    //                 document.getElementById('infinite-scroll-content').insertAdjacentHTML('beforeend', newCampgrounds);
+    //                 page++;
+    //                 loading = false;
+    //             })
+    //             .catch(error => {
+    //                 console.error('Error fetching more campgrounds:', error);
+    //                 loading = false;
+    //             });
+    //     }
+    // }
+
+    // Event listener for scroll
+    window.addEventListener('scroll', () => {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+        if (scrollTop + clientHeight >= scrollHeight - 100) {
+            fetchMoreCampgrounds();
+        }
+    });
+</script>
+
+<script src="/cluster.js"></script>
